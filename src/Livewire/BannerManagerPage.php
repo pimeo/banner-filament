@@ -88,11 +88,6 @@ class BannerManagerPage extends Page
         return BannerPlugin::get()->getNavigationLabel();
     }
 
-    public static function getCluster(): ?string
-    {
-        return BannerPlugin::get()->getCluster();
-    }
-
     public static function canAccess(): bool
     {
         if (BannerPlugin::get()->getDisableBannerManager()) {
