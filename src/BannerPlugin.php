@@ -4,6 +4,7 @@ namespace Kenepa\Banner;
 
 use Filament\Contracts\Plugin;
 use Filament\Panel;
+use Filament\Clusters\Cluster;
 use Kenepa\Banner\Contracts\BannerStorage;
 use Kenepa\Banner\Http\Middleware\SetRenderLocation;
 use Kenepa\Banner\Livewire\BannerManagerPage;
@@ -26,9 +27,15 @@ class BannerPlugin implements Plugin
 
     protected ?int $navigationSort = null;
 
+    protected ?string $navigationBadge = null;
+
+    protected ?string $navigationBadgeColor = null;
+
     protected ?string $bannerManagerAccessPermission = null;
 
     protected ?bool $disableBannerManager = false;
+
+    protected ?string $cluster = null;
 
     public static function make(): static
     {
@@ -149,6 +156,42 @@ class BannerPlugin implements Plugin
         $this->navigationLabel = $label;
 
         return $this;
+    }
+
+    public function navigationBadge(?string $badge): static
+    {
+        $this->navigationBadge = $badge;
+
+        return $this;
+    }
+
+    public function getNavigationBadge(): ?string
+    {
+        return $this->navigationBadge;
+    }
+
+    public function navigationBadgeColor(?string $badgeColor): static
+    {
+        $this->navigationBadgeColor = $badgeColor;
+
+        return $this;
+    }
+
+    public function getNavigationBadgeColor(): ?string
+    {
+        return $this->navigationBadgeColor;
+    }
+
+    public function cluster(?string $cluster): static
+    {
+        $this->cluster = $cluster;
+
+        return $this;
+    }
+
+    public function getCluster(): ?string
+    {
+        return $this->cluster;
     }
 
     public function bannerManagerAccessPermission(?string $permission): static

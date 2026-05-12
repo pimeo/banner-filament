@@ -55,6 +55,11 @@ class BannerManagerPage extends Page
             return (string) $activeBannerCount;
         }
 
+        $customNavigationBadge = BannerPlugin::get()->getNavigationBadge();
+        if (!is_null($customNavigationBadge)) {
+            return $customNavigationBadge;
+        }
+
         return null;
     }
 
@@ -73,9 +78,19 @@ class BannerManagerPage extends Page
         return BannerPlugin::get()->getNavigationSort();
     }
 
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return BannerPlugin::get()->getNavigationBadgeColor();
+    }
+
     public static function getNavigationLabel(): string
     {
         return BannerPlugin::get()->getNavigationLabel();
+    }
+
+    public static function getCluster(): ?string
+    {
+        return BannerPlugin::get()->getCluster();
     }
 
     public static function canAccess(): bool
@@ -110,7 +125,7 @@ class BannerManagerPage extends Page
             ->schema($this->getBannerSchema())
             ->icon('heroicon-m-plus')
             ->closeModalByClickingAway(false)
-            ->action(fn (array $data) => $this->createBanner($data))
+            ->action(fn(array $data) => $this->createBanner($data))
             ->slideOver();
     }
 
@@ -128,7 +143,6 @@ class BannerManagerPage extends Page
                     ->icon('heroicon-m-trash')
                     ->danger()
                     ->send();
-
             })
             ->color('danger')
             ->icon('heroicon-m-trash')
@@ -218,7 +232,7 @@ class BannerManagerPage extends Page
                     Tab::make(__('banner::form.tabs.general'))
                         ->icon('heroicon-m-wrench')
                         ->schema([
-                            Hidden::make('id')->default(fn () => uniqid()),
+                            Hidden::make('id')->default(fn() => uniqid()),
                             TextInput::make('name')->required()->label(__('banner::form.fields.name')),
                             RichEditor::make('content')
                                 ->required()
@@ -283,7 +297,7 @@ class BannerManagerPage extends Page
                                     ->tooltip(__('banner::form.fields.scope_help')))
                                 ->searchable()
                                 ->multiple()
-                                ->options(fn () => $this->getScopes())
+                                ->options(fn() => $this->getScopes())
                                 ->label(__('banner::form.fields.scope')),
                             Fieldset::make(__('banner::form.fields.options'))
                                 ->schema([
@@ -335,7 +349,7 @@ class BannerManagerPage extends Page
                                     ColorPicker::make('end_color')
                                         ->label(__('banner::form.fields.end_color'))
                                         ->default('#F59E0C')
-                                        ->visible(fn ($get) => $get('background_type') === 'gradient'),
+                                        ->visible(fn($get) => $get('background_type') === 'gradient'),
                                 ])
                                 ->columns(3),
                         ]),
@@ -349,7 +363,7 @@ class BannerManagerPage extends Page
                                 ->live(),
                             Fieldset::make('Config')
                                 ->label(__('banner::form.fields.link_config'))
-                                ->hidden(fn (Get $get): bool => ! $get('link_active'))
+                                ->hidden(fn(Get $get): bool => ! $get('link_active'))
                                 ->schema([
                                     TextInput::make('link_url')
                                         ->label(__('banner::form.fields.link_url'))
@@ -377,7 +391,7 @@ class BannerManagerPage extends Page
                                         ->grouped(),
                                     TextInput::make('link_text')
                                         ->label(__('banner::form.fields.link_text'))
-                                        ->hidden(fn (Get $get): bool => $get('link_click_action') === 'clickable_banner')
+                                        ->hidden(fn(Get $get): bool => $get('link_click_action') === 'clickable_banner')
                                         ->required()
                                         ->columnSpanFull(),
                                     ToggleButtons::make('link_button_style')
@@ -386,7 +400,7 @@ class BannerManagerPage extends Page
                                         ->live()
                                         ->default('button')
                                         ->required()
-                                        ->hidden(fn (Get $get): bool => $get('link_click_action') === 'clickable_banner')
+                                        ->hidden(fn(Get $get): bool => $get('link_click_action') === 'clickable_banner')
                                         ->options([
                                             'button' => 'Button',
                                             'link' => 'Link',
@@ -395,21 +409,21 @@ class BannerManagerPage extends Page
                                     ColorPicker::make('link_button_color')
                                         ->label(__('banner::form.fields.link_button_color'))
                                         ->required()
-                                        ->hidden(fn (Get $get): bool => $get('link_click_action') === 'clickable_banner' || $get('link_button_style') === 'link')
+                                        ->hidden(fn(Get $get): bool => $get('link_click_action') === 'clickable_banner' || $get('link_button_style') === 'link')
                                         ->default('#F59E0C'),
                                     ColorPicker::make('link_text_color')
                                         ->label(__('banner::form.fields.link_text_color'))
                                         ->required()
-                                        ->hidden(fn (Get $get): bool => $get('link_click_action') === 'clickable_banner')
+                                        ->hidden(fn(Get $get): bool => $get('link_click_action') === 'clickable_banner')
                                         ->default('#F59E0C'),
                                     TextInput::make('link_button_icon')
                                         ->label(__('banner::form.fields.link_button_icon'))
                                         ->default('heroicon-m-megaphone')
-                                        ->hidden(fn (Get $get): bool => $get('link_click_action') === 'clickable_banner')
+                                        ->hidden(fn(Get $get): bool => $get('link_click_action') === 'clickable_banner')
                                         ->placeholder('heroicon-m-wrench'),
                                     ColorPicker::make('link_button_icon_color')
                                         ->label(__('banner::form.fields.link_button_icon_color'))
-                                        ->hidden(fn (Get $get): bool => $get('link_click_action') === 'clickable_banner')
+                                        ->hidden(fn(Get $get): bool => $get('link_click_action') === 'clickable_banner')
                                         ->default('#F59E0C'),
                                 ]),
                         ]),
@@ -417,7 +431,7 @@ class BannerManagerPage extends Page
                         ->reactive()
                         ->icon('heroicon-m-clock')
                         ->badgeIcon('heroicon-m-eye')
-                        ->badge(fn ($get) => $this->calculateScheduleStatus($get('start_time'), $get('end_time')))
+                        ->badge(fn($get) => $this->calculateScheduleStatus($get('start_time'), $get('end_time')))
                         ->schema([
                             DateTimePicker::make('start_time')
                                 ->afterLabel(
